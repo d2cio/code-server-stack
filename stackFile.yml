@@ -1,0 +1,35 @@
+version: '1.0'
+services:
+  - name: codeserver
+    type: docker
+    image: d2cio/code-server
+    version: latest
+    ports:
+      - 8443
+    remoteAccess: false
+    volumes:
+      - directory: /home/coder/project
+    volumesUID: 1000
+    startCommand: --allow-http --trust-proxy
+    env:
+      PASSWORD: null
+    deployTo:
+      - codeserver
+
+  - name: web
+    type: nginx
+    version: 1.15
+    ports:
+      - 80
+      - 443
+    remoteAccess: true
+    serviceFiles:
+      - name: codeserver
+    deployTo:
+      - codeserver
+
+hosts:
+  - name: codeserver
+    requirements:
+      cores: 1
+      memory: 4
